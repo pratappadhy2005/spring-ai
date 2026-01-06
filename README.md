@@ -51,6 +51,6 @@ The goal of this project is to serve as:
 ### Clone the repository
 
 ```bash
-git clone git@github.com:pratappadhy2005/mastering_java_8_to_21.git
+git clone git@github.com:pratappadhy2005/spring-ai.git
 cd spring-ai-intro
 

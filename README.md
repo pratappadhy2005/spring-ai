@@ -1,4 +1,4 @@
-# Spring AI Playground
+# Spring AI Projects
 
 > A sample project demonstrating how to build AI-powered applications using Spring AI and Spring Boot.
 

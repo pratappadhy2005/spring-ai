@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/pratappadhy/Documents/Projects/SpringAI/mcp",
+        "/Users/pratappadhy/Documents/Projects/SpringAI/personal_data",
+        "/Users/pratappadhy/Documents/Projects/SpringAI/mcp-app"
+      ]
+    }
+  }
+}

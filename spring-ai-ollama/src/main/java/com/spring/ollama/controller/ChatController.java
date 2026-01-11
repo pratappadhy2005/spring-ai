@@ -1,6 +1,7 @@
 package com.spring.ollama.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,8 +13,8 @@ public class ChatController {
 
     private ChatClient chatClient;
 
-    public ChatController(ChatClient.Builder builder) {
-        this.chatClient = builder.build();
+    public ChatController(ChatModel model) {
+        this.chatClient = ChatClient.builder(model).build();
     }
 
     @RequestMapping("/chat")

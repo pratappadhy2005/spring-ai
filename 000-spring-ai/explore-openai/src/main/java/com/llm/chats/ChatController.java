@@ -31,7 +31,7 @@ public class ChatController {
 
         var responseSpec = chatClientRequestSpec.call();
 
-       var response = responseSpec.chatResponse();
+       var response = responseSpec.content();
         logger.info("Received response spec: {}", response);
 
         return response;

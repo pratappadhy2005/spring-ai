@@ -36,4 +36,28 @@ public class ChatController {
 
         return response;
     }
+
+    @PostMapping("/v2/chats")
+    public Object chatv2(@RequestBody UserInput userInput) {
+        logger.info("Received user input: {}", userInput);
+
+        var  systemMessage = """
+        You are a helpful assistant who can answer JAVA based questions.
+        For any other questions, you will politely decline to answer and suggest the user to ask a JAVA based question.
+        """;
+
+        var chatClientRequestSpec = chatClient
+                .prompt()
+                .user(userInput.prompt())
+                .system(systemMessage);
+
+        logger.info("Constructed chat client request spec: {}", chatClientRequestSpec);
+
+        var responseSpec = chatClientRequestSpec.call();
+
+        var response = responseSpec.content();
+        logger.info("Received response spec: {}", response);
+
+        return response;
+    }
 }

@@ -41,7 +41,15 @@ public class GlobalErrorHandler {
         var error = new Error(ex.getMessage(), LocalDateTime.now(), HttpStatus.BAD_REQUEST.toString());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
-    public record Error(String errorMessage, LocalDateTime timestamp, String status ){
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleAllExceptions(Exception ex) {
+        log.error("Unhandled exception: ", ex);
+        var error = new Error("Internal server error: " + ex.getMessage(), LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public record Error(String errorMessage, LocalDateTime timestamp, String status) {
     }
 }
 

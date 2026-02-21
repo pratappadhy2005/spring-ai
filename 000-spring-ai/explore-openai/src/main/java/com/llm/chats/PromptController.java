@@ -27,6 +27,9 @@ public class PromptController {
     @Value("classpath:/prompt-templates/coding-assistant.st")
     private Resource systemText;
 
+    @Value("classpath:/prompt-templates/java-coding-assistant.st")
+    private Resource systemTemplateMesasge;
+
 
     public PromptController(ChatClient.Builder chatClientBuilder) {
         this.chatClient = chatClientBuilder.build();
@@ -41,13 +44,13 @@ public class PromptController {
         For any other questions, you will politely decline to answer and suggest the user to ask a JAVA based question.
         """;
 
-       var sysMessage =  new SystemMessage(systemMessage);
+       var sysMessage =  new SystemMessage(systemTemplateMesasge);
        var userMessage = new UserMessage(userInput.prompt());
 
        var promptMessage = new Prompt(List.of(sysMessage,
-               new UserMessage("What's my name?"),
-               new AssistantMessage("I don't know"),
-               new UserMessage("My name is John"),
+//               new UserMessage("What's my name?"),
+//               new AssistantMessage("I don't know"),
+//               new UserMessage("My name is John"),
                userMessage));
 
         var response = chatClient

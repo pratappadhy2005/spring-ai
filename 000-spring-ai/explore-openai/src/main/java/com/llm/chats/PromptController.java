@@ -4,7 +4,6 @@ import com.llm.dto.UserInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -28,7 +27,7 @@ public class PromptController {
     private Resource systemText;
 
     @Value("classpath:/prompt-templates/java-coding-assistant.st")
-    private Resource systemTemplateMesasge;
+    private Resource systemtemplateMesasge;
 
 
     public PromptController(ChatClient.Builder chatClientBuilder) {
@@ -39,19 +38,19 @@ public class PromptController {
     public String prompts(@RequestBody UserInput userInput) {
         log.info("User input received: {}", userInput);
 
-        var  systemMessage = """
-        You are a helpful assistant who can answer JAVA based questions.
-        For any other questions, you will politely decline to answer and suggest the user to ask a JAVA based question.
-        """;
+        var systemMessage = """
+                You are a helpful assistant who can answer JAVA based questions.
+                For any other questions, you will politely decline to answer and suggest the user to ask a JAVA based question.
+                """;
 
-       var sysMessage =  new SystemMessage(systemTemplateMesasge);
-       var userMessage = new UserMessage(userInput.prompt());
+        var sysMessage = new SystemMessage(systemtemplateMesasge);
+        var userMessage = new UserMessage(userInput.prompt());
 
-       var promptMessage = new Prompt(List.of(sysMessage,
+        var promptMessage = new Prompt(List.of(sysMessage,
 //               new UserMessage("What's my name?"),
 //               new AssistantMessage("I don't know"),
 //               new UserMessage("My name is John"),
-               userMessage));
+                userMessage));
 
         var response = chatClient
                 .prompt(promptMessage)
@@ -62,4 +61,29 @@ public class PromptController {
         return response;
     }
 
+    @PostMapping("/v1/prompts/{language}")
+    public String promptByLanguage(
+            @PathVariable String language,
+            @RequestBody UserInput userInput) {
+
+        log.info("User input received for language {}: {}", language, userInput);
+
+        var systemPromptTemplate = new SystemPromptTemplate(systemText);
+        var systemMessage = systemPromptTemplate.createMessage(Map.of("language", language.toUpperCase()));
+
+        log.info("System message created: {}", systemMessage);
+
+        var userMessage = new UserMessage(userInput.prompt());
+
+        var promptMessage = new Prompt(List.of(systemMessage,
+                userMessage));
+
+        var response = chatClient
+                .prompt(promptMessage)
+                .call()
+                .content();
+
+        log.info("Response received: {}", response);
+        return response;
+    }
 }

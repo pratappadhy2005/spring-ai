@@ -5,7 +5,10 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +21,9 @@ public class ChatController {
     private static Logger logger = LoggerFactory.getLogger(ChatController.class);
 
     private final ChatClient chatClient;
+
+    @Value("classpath:/prompt-templates/coding-assistant.st")
+    private Resource systemText;
 
     public ChatController(ChatClient.Builder chatClientBuilder) {
         this.chatClient = chatClientBuilder.build();
@@ -54,6 +60,27 @@ public class ChatController {
                 .prompt()
                 .user(userInput.prompt())
                 .system(systemMessage);
+
+        logger.info("Constructed chat client request spec: {}", chatClientRequestSpec);
+
+        var responseSpec = chatClientRequestSpec.call();
+
+        var response = responseSpec.content();
+        logger.info("Received response spec: {}", response);
+
+        return response;
+    }
+
+    @PostMapping("/v2/prompts/{language}")
+    public Object prompts(
+            @PathVariable String language,
+            @RequestBody UserInput userInput) {
+        logger.info("Received user input: {}", userInput);
+
+        var chatClientRequestSpec = chatClient
+                .prompt()
+                .user(userInput.prompt())
+                .system(promptSystemSpec -> promptSystemSpec.text(systemText).param("language", language.toUpperCase()));
 
         logger.info("Constructed chat client request spec: {}", chatClientRequestSpec);
 
